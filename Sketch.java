@@ -7,9 +7,11 @@ public class Sketch extends PApplet {
   PImage imgStick;
   PImage imgWhite;
 
-  double[][] ballPos = new double[16][2];
+  double[][] ballPos = new double[16][2]; //row zero corresponds to X, one corresponds to Y
+  float[][] ballSpeed = new float[16][2]; //row zero corresponds to X, one corresponds to Y
   double stickX = 250, stickY = 100;
   double rotation = 0;
+  int hitPower = 500;
   boolean hideStick = false, isHit = false;
   double xChange = 0, yChange = 0;
   double slope = 1;
@@ -35,7 +37,6 @@ public class Sketch extends PApplet {
 
   public void draw() {
 	    image (imgBoard, 0, 0);
-      //image (imgWhite, ballPos[0][0], ballPos[0][1]);
       ellipse ((float) ballPos[0][0], (float) ballPos[0][1], 24, 24);
       pushMatrix();
       translate ((float) (stickX + imgStick.width / 2), (float) (stickY + imgStick.height / 2));
@@ -45,28 +46,32 @@ public class Sketch extends PApplet {
         image (imgStick, 0, 0);
         // if slope is undefined?
         slope = -yChange / xChange;
-        System.out.println (yChange);
       }
       popMatrix();
       //ellipse ((float) (ballPos[0][0] + xChange), (float) (ballPos[0][1] + yChange), 20, 20);
       
       if (isHit == true) {
-        int hitPower = 100; //this can be changed by user
         if (hitPower > 0) {
           hitPower --;
           if (xChange > 0) { // zero?
-            ballPos[0][0] ++;
+            ballPos[0][0] += ballSpeed[0][0];
           }
           else {
-            ballPos[0][0] --;
+            ballPos[0][0] -= ballSpeed[0][0];
           }
-          if (yChange < 0) { //zero?
-            ballPos[0][1] -= Math.abs (slope);
+          if (yChange > 0) { //zero?
+            ballPos[0][1] += ballSpeed[0][1];
           }
           else {
-            ballPos[0][1] += Math.abs (slope);
+            ballPos[0][1] -= ballSpeed[0][1];
           }
-          ellipse ((float) ballPos[0][0], (float) ballPos[0][1], 24, 24);
+          
+          if (ballPos[0][0] + 12 > width - 50 || ballPos[0][0] - 12 < 50) {
+            ballSpeed[0][0] *= -1;
+          }
+          if (ballPos[0][1] + 12 > height - 50 || ballPos[0][1] - 12 < 50) {
+            ballSpeed[0][1] *= -1;
+          }
         }
       }
   }
@@ -77,9 +82,11 @@ public class Sketch extends PApplet {
     yChange = 1.05 * imgStick.width * Math.sin (rotation);
   }
 
-  public void mouseClicked () {
+  public void mouseClicked () { //set a stage cause clicking during ruins directions
+    ballSpeed[0][0] = 2;
+    ballSpeed[0][1] = (float) (2 * Math.abs (slope));
     isHit = true;
-    //hideStick = true;
+    hideStick = true;
     
   }
  
