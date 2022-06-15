@@ -7,10 +7,12 @@ public class Sketch extends PApplet {
   PImage imgStick;
   PImage imgWhite;
 
-  int[][] ballPos = new int[16][2];
+  double[][] ballPos = new double[16][2];
   double stickX = 250, stickY = 100;
   double rotation = 0;
-  boolean tempShit = false;
+  boolean hideStick = false, isHit = false;
+  double xChange = 0, yChange = 0;
+  double slope = 1;
 
   public void settings() {
     size(750, 422);
@@ -24,6 +26,7 @@ public class Sketch extends PApplet {
 
     ballPos[0][0] = width / 2;
     ballPos[0][1] = height / 2;
+    //upd stickX and stickY
 
     stickX = ballPos[0][0] + (-0.5 * imgStick.width);
     stickY = ballPos[0][1] + (-0.5 * imgStick.height);
@@ -33,19 +36,51 @@ public class Sketch extends PApplet {
   public void draw() {
 	    image (imgBoard, 0, 0);
       //image (imgWhite, ballPos[0][0], ballPos[0][1]);
-      //image (imgStick, stickX, stickY);
-      ellipse (ballPos[0][0], ballPos[0][1], 24, 24);
+      ellipse ((float) ballPos[0][0], (float) ballPos[0][1], 24, 24);
       pushMatrix();
       translate ((float) (stickX + imgStick.width / 2), (float) (stickY + imgStick.height / 2));
-      rotate ((float) rotation);
+      rotate ((float) (rotation));
       translate ((float) (-1.05 * imgStick.width), (float) (-0.5 * imgStick.height));
-      image (imgStick, 0, 0);
+      if (hideStick == false) {
+        image (imgStick, 0, 0);
+        // if slope is undefined?
+        slope = -yChange / xChange;
+        System.out.println (yChange);
+      }
       popMatrix();
-      //rotation = rotation + 0.05;
+      //ellipse ((float) (ballPos[0][0] + xChange), (float) (ballPos[0][1] + yChange), 20, 20);
+      
+      if (isHit == true) {
+        int hitPower = 100; //this can be changed by user
+        if (hitPower > 0) {
+          hitPower --;
+          if (xChange > 0) { // zero?
+            ballPos[0][0] ++;
+          }
+          else {
+            ballPos[0][0] --;
+          }
+          if (yChange < 0) { //zero?
+            ballPos[0][1] -= Math.abs (slope);
+          }
+          else {
+            ballPos[0][1] += Math.abs (slope);
+          }
+          ellipse ((float) ballPos[0][0], (float) ballPos[0][1], 24, 24);
+        }
+      }
   }
 
-  public void mouseDragged () {
-    rotation = atan2((float) (mouseY - stickY), (float) (mouseX - stickX));
+  public void mouseDragged () { //not simply dragged, level stages needed.
+    rotation = atan2((float) (mouseY - ballPos[0][1]), (float) (mouseX - ballPos[0][0]));
+    xChange = 1.05 * imgStick.width * Math.cos (rotation);
+    yChange = 1.05 * imgStick.width * Math.sin (rotation);
+  }
+
+  public void mouseClicked () {
+    isHit = true;
+    //hideStick = true;
+    
   }
  
 }
