@@ -8,9 +8,8 @@ public class Sketch extends PApplet {
 
   double[][] ballPos = new double[16][2]; //row zero corresponds to X, one corresponds to Y
   float[][] ballSpeed = new float[16][2]; //row zero corresponds to X, one corresponds to Y
-  double[][] acceleration = new double[16][2]; //row zero corresponds to X, one corresponds to Y
   float[][] velocity = new float[16][2];
-  double velTemp = 0, velTemp2 = 0;
+  double velTemp = 0;
   double stickX = 250, stickY = 100;
   double rotation = 0;
   int defaultPower = 200;
@@ -31,16 +30,14 @@ public class Sketch extends PApplet {
     ballPos[0][1] = height / 2;
     ballPos[1][0] = 500;
     ballPos[1][1] = 300;
-    ballPos[2][0] = 300;
-    ballPos[2][1] = 90;
+    ballPos[2][0] = 100;
+    ballPos[2][1] = 100;
     
-    acceleration[0][0] = 0.99;
-    acceleration[0][1] = 0.99;
     //upd stickX and stickY after hits
 
     stickX = ballPos[0][0] + (-0.5 * imgStick.width);
     stickY = ballPos[0][1] + (-0.5 * imgStick.height);
-    velocity[0][0] = 200;
+    velocity[0][0] = 300;
     velTemp = velocity[0][0];
 
     for (int i = 1; i < 16; i ++) {
@@ -71,15 +68,13 @@ public class Sketch extends PApplet {
         image (imgStick, 0, 0);
         // if slope is undefined?
         slope = -yChange / xChange;
-        velocity[0][1] = (float) slope * velocity[0][0];
+        velocity[0][1] = (float) slope * (-velocity[0][0]);
       }
       popMatrix();
       
       if (isHit == true) {
         if (velTemp > 0) { //ballSpeed?
           velTemp --;
-          //ballSpeed[0][0] *= acceleration[0][0];
-          //ballSpeed[0][1] *= acceleration[0][1];
 
           /*if (ballPos[0][0] + 12 > width - 50 || ballPos[0][0] - 12 < 50) {
             ballSpeed[0][0] *= -1;
@@ -93,7 +88,7 @@ public class Sketch extends PApplet {
             ballSpeed[i][0] = (float) (velocity[i][0] / 100 * 0.5);
             ballSpeed[i][1] = (float) (velocity[i][1] / 100 * 0.5);
             ballPos[i][0] += ballSpeed[i][0];
-            ballPos[i][1] -= ballSpeed[i][1];
+            ballPos[i][1] += ballSpeed[i][1];
           }
         }
         
@@ -135,7 +130,7 @@ public class Sketch extends PApplet {
 
   private void collided (int a, int b) {
     float normalX = (float) (ballPos[b][0] - ballPos[a][0]);
-    float normalY = (float) -(ballPos[b][1] - ballPos[a][1]);
+    float normalY = (float) (ballPos[b][1] - ballPos[a][1]);
 
     float magnitude = (float) Math.sqrt (normalX * normalX + normalY * normalY);
     float unitNormX = normalX / magnitude;
@@ -143,10 +138,10 @@ public class Sketch extends PApplet {
     float unitTangentX = -unitNormY;
     float unitTangentY = unitNormX;
 
-    float aVelDotNorm = (float) (unitNormX * velocity[a][0] - unitNormY * velocity[a][1]);
-    float aVelDotTan = (float) (unitTangentX * velocity[a][0] - unitTangentY * velocity[a][1]);
-    float bVelDotNorm = (float) (unitNormX * velocity[b][0] - unitNormY * velocity[b][1]);
-    float bVelDotTan = (float) (unitTangentX * velocity[b][0] - unitTangentY * velocity[b][1]);
+    float aVelDotNorm = (float) (unitNormX * velocity[a][0] + unitNormY * velocity[a][1]);
+    float aVelDotTan = (float) (unitTangentX * velocity[a][0] + unitTangentY * velocity[a][1]);
+    float bVelDotNorm = (float) (unitNormX * velocity[b][0] + unitNormY * velocity[b][1]);
+    float bVelDotTan = (float) (unitTangentX * velocity[b][0] + unitTangentY * velocity[b][1]);
     float aVelDotNormTag = bVelDotNorm;
     float bVelDotNormTag = aVelDotNorm;
     float aVelDotNormTagX = unitNormX * aVelDotNormTag;
