@@ -12,13 +12,14 @@ public class Sketch extends PApplet {
   double velTemp = 0;
   double stickX = 250, stickY = 100;
   double rotation = 0;
-  int defaultPower = 200;
   double xChange = 0, yChange = 0;
   double slope = 1;
   int ballsMoving = 0;
+  boolean mouseIsDragged = false, needsToChoosePower = false;
+  int power = 0;
 
   public void settings() {
-    size(750, 422);
+    size(750, 472);
   }
 
   public void setup() {
@@ -61,7 +62,8 @@ public class Sketch extends PApplet {
 
 
     
-    //upd stickX and stickY after hits
+
+    
 
     for (int i = 1; i < 16; i ++) {
       velocity[i][0] = 0;
@@ -71,7 +73,8 @@ public class Sketch extends PApplet {
   }
 
   public void draw() {
-    
+    background(125, 255, 205);
+
     stickX = ballPos[0][0] + (-0.5 * imgStick.width);
     stickY = ballPos[0][1] + (-0.5 * imgStick.height);
     ballsMoving = 0;
@@ -101,7 +104,6 @@ public class Sketch extends PApplet {
       }
     }
       
-    System.out.println (ballsMoving);
     
     pushMatrix();
     translate ((float) (stickX + imgStick.width / 2), (float) (stickY + imgStick.height / 2));
@@ -113,11 +115,16 @@ public class Sketch extends PApplet {
       slope = -yChange / xChange;
     }
     popMatrix();
+
+    if (needsToChoosePower) {
+      fill (0);
+      text ("ENTER A NUMBER BETWEEN 1 AND 9 TO INDICATE THE POWER OF YOUR HIT", 10, 444);
+    }
     for (int i = 0; i < 16; i ++) {
       velocity[i][0] *= 0.97;
       velocity[i][1] *= 0.97;
       for (int j = 0; j < 2; j ++) {
-        if (velocity[i][j] < 2) {
+        if (Math.abs (velocity[i][j]) < 2) {
           velocity[i][j] = 0;
         }
       }
@@ -129,26 +136,43 @@ public class Sketch extends PApplet {
       if (ballPos[i][0] + 10 > width - 50 || ballPos[i][0] - 10 < 50) {
         velocity[i][0] *= -1;
       }
-      if (ballPos[i][1] + 10 > height - 50 || ballPos[i][1] - 10 < 50) {
+      if (ballPos[i][1] + 10 > height - 100 || ballPos[i][1] - 10 < 50) {
         velocity[i][1] *= -1;
       }
     }
   }
 
-  public void mouseMoved () { //not simply dragged, level stages needed.
-    
+  public void mouseDragged () { //not simply dragged, level stages needed.
+    mouseIsDragged = true;
     rotation = atan2((float) (mouseY - ballPos[0][1]), (float) (mouseX - ballPos[0][0]));
     xChange = 1.05 * imgStick.width * Math.cos (rotation);
     yChange = 1.05 * imgStick.width * Math.sin (rotation);
     slope = -yChange / xChange;
+    mouseIsDragged = false;
   }
 
   public void mouseClicked () { //set a stage cause clicking during ruins directions
+    // click without dragging doesnt work
+
+    if (mouseIsDragged == true) {
+      return;
+    }
+    needsToChoosePower = true;
+    
+  }
+
+  public void keyPressed () {
+    if (needsToChoosePower == false) {
+      return;
+    }
+    power = 48 - (int) key;
+
+
     if (Math.cos (rotation) < 0) {
-      velocity[0][0] = -1000;
+      velocity[0][0] = (float) (power * (-200) * Math.cos(rotation));
     }
     else {
-      velocity[0][0] = 1000;
+      velocity[0][0] = (float) (power * (-200) * Math.cos(rotation));
     }
     if (Math.sin (rotation) > 0) {
       velocity[0][1] = Math.abs (velocity[0][0] * (float) slope);
@@ -156,6 +180,9 @@ public class Sketch extends PApplet {
     else {
       velocity[0][1] = -1 * Math.abs (velocity[0][0] * (float) slope);
     }
+
+    
+    needsToChoosePower = false;
   }
 
   private boolean collisionCheck (int a, int b) {
@@ -166,7 +193,6 @@ public class Sketch extends PApplet {
   }
 
   private void collided (int a, int b) {
-    //System.out.println (a + " " + b);
     float normalX = (float) (ballPos[b][0] - ballPos[a][0]);
     float normalY = (float) (ballPos[b][1] - ballPos[a][1]);
 
