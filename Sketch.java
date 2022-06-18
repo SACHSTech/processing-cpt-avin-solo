@@ -8,7 +8,8 @@ public class Sketch extends PApplet {
 
   double[][] ballPos = new double[16][2]; //row zero corresponds to X, one corresponds to Y
   float[][] ballSpeed = new float[16][2]; //row zero corresponds to X, one corresponds to Y
-  float[][] velocity = new float[16][2];
+  float[][] velocity = new float[16][2]; //row zero corresponds to X, one corresponds to Y
+  boolean [] mustHide = new boolean[16];
   double velTemp = 0;
   double stickX = 250, stickY = 100;
   double rotation = 0;
@@ -60,19 +61,16 @@ public class Sketch extends PApplet {
     ballPos[15][0] = 613;
     ballPos[15][1] = 255;
 
-
-    
-
-    
-
     for (int i = 1; i < 16; i ++) {
       velocity[i][0] = 0;
       velocity[i][1] = 0;
+      mustHide[i] = false;
     }
    
   }
 
   public void draw() {
+
     background(125, 255, 205);
 
     stickX = ballPos[0][0] + (-0.5 * imgStick.width);
@@ -96,10 +94,12 @@ public class Sketch extends PApplet {
     }
     fill (3, 252, 94);
     for (int i = 1; i < 16; i ++) {
-      ellipse ((float) ballPos[i][0], (float) ballPos[i][1], 20, 20);
-      for (int j = i + 1; j < 16; j ++) {
-        if (collisionCheck (i, j) == true) {
-          collided(i, j);
+      if (mustHide[i] == false) {
+        ellipse ((float) ballPos[i][0], (float) ballPos[i][1], 20, 20);
+        for (int j = i + 1; j < 16; j ++) {
+          if (collisionCheck (i, j) == true) {
+            collided(i, j);
+          }
         }
       }
     }
@@ -133,13 +133,35 @@ public class Sketch extends PApplet {
       ballPos[i][0] += ballSpeed[i][0];
       ballPos[i][1] += ballSpeed[i][1];
 
-      if (ballPos[i][0] + 10 > width - 50 || ballPos[i][0] - 10 < 50) {
-        velocity[i][0] *= -1;
+      if (ballPos[i][0] + 10 > width - 55 && ballPos[i][1] - 10 < 55) {
+        mustHide[i] = true;
       }
-      if (ballPos[i][1] + 10 > height - 100 || ballPos[i][1] - 10 < 50) {
-        velocity[i][1] *= -1;
+      else if (ballPos[i][0] + 10 > width - 55 && ballPos[i][1] + 10 > 422 - 55) {
+        mustHide[i] = true;
+      }
+      else if (ballPos[i][0] - 10 < 55 && ballPos[i][1] - 10 < 55) {
+        mustHide[i] = true;
+      }
+      else if (ballPos[i][0] - 10 < 55 && ballPos[i][1] + 10 > 422 - 55) {
+        mustHide[i] = true;
+      }
+      else if (ballPos[i][0] >= 355 && ballPos[i][0] <= 395 && ballPos[i][1] - 10 < 50) {
+        mustHide[i] = true;
+      } 
+      else if (ballPos[i][0] >= 355 && ballPos[i][0] <= 395 && ballPos[i][1] + 10 > 422 - 50) {
+        mustHide[i] = true;
+      }
+      else {
+        if (ballPos[i][0] + 10 > width - 50 || ballPos[i][0] - 10 < 45) {
+          velocity[i][0] *= -1;
+        }
+        if (ballPos[i][1] + 10 > height - 100 || ballPos[i][1] - 10 < 45) {
+          velocity[i][1] *= -1;
+        }
       }
     }
+
+    // white ball doesnt go through mustHide process
   }
 
   public void mouseDragged () { //not simply dragged, level stages needed.
