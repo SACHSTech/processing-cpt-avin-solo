@@ -169,10 +169,10 @@ public class Sketch extends PApplet {
 
 
     if (Math.cos (rotation) < 0) {
-      velocity[0][0] = (float) (power * (-200) * Math.cos(rotation));
+      velocity[0][0] = (float) (power * (-350) * Math.cos(rotation));
     }
     else {
-      velocity[0][0] = (float) (power * (-200) * Math.cos(rotation));
+      velocity[0][0] = (float) (power * (-350) * Math.cos(rotation));
     }
     if (Math.sin (rotation) > 0) {
       velocity[0][1] = Math.abs (velocity[0][0] * (float) slope);
