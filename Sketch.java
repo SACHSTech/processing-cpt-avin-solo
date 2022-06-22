@@ -5,12 +5,29 @@ public class Sketch extends PApplet {
 	
 	PImage imgBoard;
   PImage imgStick;
+  PImage imgBall1;
+  PImage imgBall2;
+  PImage imgBall3;
+  PImage imgBall4;
+  PImage imgBall5;
+  PImage imgBall6;
+  PImage imgBall7;
+  PImage imgBall8;
+  PImage imgBall9;
+  PImage imgBall10;
+  PImage imgBall11;
+  PImage imgBall12;
+  PImage imgBall13;
+  PImage imgBall14;
+  PImage imgBall15;
+  PImage imgRightArrow;
+  PImage imgLeftArrow;
+
 
   double[][] ballPos = new double[16][2]; //row zero corresponds to X, one corresponds to Y
   float[][] ballSpeed = new float[16][2]; //row zero corresponds to X, one corresponds to Y
   float[][] velocity = new float[16][2]; //row zero corresponds to X, one corresponds to Y
-  boolean [] mustHide = new boolean[16];
-  double velTemp = 0;
+  boolean[] mustHide = new boolean[16];
   double stickX = 250, stickY = 100;
   double rotation = 0;
   double xChange = 0, yChange = 0;
@@ -18,6 +35,7 @@ public class Sketch extends PApplet {
   int ballsMoving = 0;
   boolean mouseIsDragged = false, needsToChoosePower = false;
   int power = 0;
+  int intPlayer = 1, intSolids = 7, intStripes = 7;
 
   public void settings() {
     size(750, 472);
@@ -27,29 +45,62 @@ public class Sketch extends PApplet {
 
     imgBoard = loadImage ("board.png");
     imgStick = loadImage ("stick.png");
+    imgBall1 = loadImage("ball 1.png");
+    imgBall2 = loadImage("ball 2.png");
+    imgBall3 = loadImage("ball 3.png");
+    imgBall4 = loadImage("ball 4.png");
+    imgBall5 = loadImage("ball 5.png");
+    imgBall6 = loadImage("ball 6.png");
+    imgBall7 = loadImage("ball 7.png");
+    imgBall8 = loadImage("ball 8.png");
+    imgBall9 = loadImage("ball 9.png");
+    imgBall10 = loadImage("ball 10.png");
+    imgBall11 = loadImage("ball 11.png");
+    imgBall12 = loadImage("ball 12.png");
+    imgBall13 = loadImage("ball 13.png");
+    imgBall14 = loadImage("ball 14.png");
+    imgBall15 = loadImage("ball 15.png");
+    imgRightArrow = loadImage("arrow to right.png");
+    imgLeftArrow = loadImage("arrow to left.png");
+
+    imgBall1.resize (20, 20);
+    imgBall2.resize (20, 20);
+    imgBall3.resize (20, 20);
+    imgBall4.resize (20, 20);
+    imgBall5.resize (20, 20);
+    imgBall6.resize (20, 20);
+    imgBall7.resize (20, 20);
+    imgBall8.resize (20, 20);
+    imgBall9.resize (20, 20);
+    imgBall10.resize (20, 20);
+    imgBall11.resize (20, 20);
+    imgBall12.resize (20, 20);
+    imgBall13.resize (20, 20);
+    imgBall14.resize (20, 20);
+    imgBall15.resize (20, 20);
 
     ballPos[0][0] = 211;
     ballPos[0][1] = 211;
-    ballPos[1][0] = 537;
-    ballPos[1][1] = 211;
-    ballPos[2][0] = 556;
-    ballPos[2][1] = 200;
+    ballPos[1][0] = 613;
+    ballPos[1][1] = 255;
+    ballPos[2][0] = 594;
+    ballPos[2][1] = 222;
     ballPos[3][0] = 556;
     ballPos[3][1] = 222;
     ballPos[4][0] = 575;
     ballPos[4][1] = 189;
-    ballPos[5][0] = 575;
-    ballPos[5][1] = 211;
+    ballPos[5][0] = 594;
+    ballPos[5][1] = 200;
     ballPos[6][0] = 575;
     ballPos[6][1] = 233;
     ballPos[7][0] = 594;
     ballPos[7][1] = 178;
-    ballPos[8][0] = 594;
-    ballPos[8][1] = 200;
-    ballPos[9][0] = 594;
-    ballPos[9][1] = 222;
-    ballPos[10][0] = 594;
-    ballPos[10][1] = 244;
+    ballPos[8][0] = 575;
+    ballPos[8][1] = 211;
+    ballPos[9][0] = 556;
+    ballPos[9][1] = 200;
+    ballPos[10][0] = 537;
+    ballPos[10][1] = 211;
     ballPos[11][0] = 613;
     ballPos[11][1] = 167;
     ballPos[12][0] = 613;
@@ -58,8 +109,8 @@ public class Sketch extends PApplet {
     ballPos[13][1] = 211;
     ballPos[14][0] = 613;
     ballPos[14][1] = 233;
-    ballPos[15][0] = 613;
-    ballPos[15][1] = 255;
+    ballPos[15][0] = 594;
+    ballPos[15][1] = 244;
 
     for (int i = 1; i < 16; i ++) {
       velocity[i][0] = 0;
@@ -85,26 +136,62 @@ public class Sketch extends PApplet {
       }
     }
 	  image (imgBoard, 0, 0);
+
     fill (255);
     ellipse ((float) ballPos[0][0], (float) ballPos[0][1], 20, 20); //add conditions of when moving
-    for (int i = 1; i < 16; i ++) {
-      if (collisionCheck (0, i) == true) {
-        collided(0, i);
-      }
+    if (intPlayer == -1 && ballsMoving == 0) {
+      image (imgRightArrow, width - 80, 430);
     }
-    fill (3, 252, 94);
-    for (int i = 1; i < 16; i ++) {
-      if (mustHide[i] == false) {
-        ellipse ((float) ballPos[i][0], (float) ballPos[i][1], 20, 20);
-        for (int j = i + 1; j < 16; j ++) {
-          if (collisionCheck (i, j) == true) {
-            collided(i, j);
-          }
-        }
-      }
+    else if (ballsMoving == 0) {
+      image (imgLeftArrow, 20, 430);
     }
-      
-    
+
+    if (mustHide[1] == false) {
+      image (imgBall1, (float) (ballPos[1][0] - 10), (float) (ballPos[1][1] - 10));
+    }
+    if (mustHide[2] == false) {
+    image (imgBall2, (float) (ballPos[2][0] - 10), (float) (ballPos[2][1] - 10));
+    }
+    if (mustHide[3] == false) {
+    image (imgBall3, (float) (ballPos[3][0] - 10), (float) (ballPos[3][1] - 10));
+    }
+    if (mustHide[4] == false) {
+    image (imgBall4, (float) (ballPos[4][0] - 10), (float) (ballPos[4][1] - 10));
+    }
+    if (mustHide[5] == false) {
+    image (imgBall5, (float) (ballPos[5][0] - 10), (float) (ballPos[5][1] - 10));
+    }
+    if (mustHide[6] == false) {
+    image (imgBall6, (float) (ballPos[6][0] - 10), (float) (ballPos[6][1] - 10));
+    }
+    if (mustHide[7] == false) {
+    image (imgBall7, (float) (ballPos[7][0] - 10), (float) (ballPos[7][1] - 10));
+    }
+    if (mustHide[8] == false) {
+    image (imgBall8, (float) (ballPos[8][0] - 10), (float) (ballPos[8][1] - 10));
+    }
+    if (mustHide[9] == false) {
+    image (imgBall9, (float) (ballPos[9][0] - 10), (float) (ballPos[9][1] - 10));
+    }
+    if (mustHide[10] == false) {
+    image (imgBall10, (float) (ballPos[10][0] - 10), (float) (ballPos[10][1] - 10));
+    }
+    if (mustHide[11] == false) {
+    image (imgBall11, (float) (ballPos[11][0] - 10), (float) (ballPos[11][1] - 10));
+    }
+    if (mustHide[12] == false) {
+    image (imgBall12, (float) (ballPos[12][0] - 10), (float) (ballPos[12][1] - 10));
+    }
+    if (mustHide[13] == false) {
+      image (imgBall13, (float) (ballPos[13][0] - 10), (float) (ballPos[13][1] - 10));
+    }
+    if (mustHide[14] == false) {
+      image (imgBall14, (float) (ballPos[14][0] - 10), (float) (ballPos[14][1] - 10));
+    }    
+    if (mustHide[15] == false) {
+      image (imgBall15, (float) (ballPos[15][0] - 10), (float) (ballPos[15][1] - 10));
+    }
+
     pushMatrix();
     translate ((float) (stickX + imgStick.width / 2), (float) (stickY + imgStick.height / 2));
     rotate ((float) (rotation));
@@ -118,38 +205,93 @@ public class Sketch extends PApplet {
 
     if (needsToChoosePower) {
       fill (0);
-      text ("ENTER A NUMBER BETWEEN 1 AND 9 TO INDICATE THE POWER OF YOUR HIT", 10, 444);
+      text ("ENTER A NUMBER BETWEEN 1 AND 9 TO INDICATE THE POWER OF YOUR HIT", 149, 444);
     }
-    for (int i = 0; i < 16; i ++) {
-      velocity[i][0] *= 0.97;
-      velocity[i][1] *= 0.97;
+    
+    for (int i = 0; i < 16; i ++) {     
+      velocity[i][0] *= 0.98;
+      velocity[i][1] *= 0.98;
       for (int j = 0; j < 2; j ++) {
         if (Math.abs (velocity[i][j]) < 2) {
           velocity[i][j] = 0;
         }
       }
-      ballSpeed[i][0] = (float) (velocity[i][0] / 100); //add acceleration?
+      ballSpeed[i][0] = (float) (velocity[i][0] / 100);
       ballSpeed[i][1] = (float) (velocity[i][1] / 100);
       ballPos[i][0] += ballSpeed[i][0];
       ballPos[i][1] += ballSpeed[i][1];
+      
+      for (int j = i + 1; j < 16; j ++) {
+        if (collisionCheck (i, j) == true) {
+          collided(i, j);
+        }
+      }
 
-      if (ballPos[i][0] + 10 > width - 55 && ballPos[i][1] - 10 < 55) {
-        mustHide[i] = true;
+      if (ballPos[i][0] + 10 > width - 52 && ballPos[i][1] - 10 < 52) {
+        if (mustHide[i] == false) {
+          mustHide[i] = true;
+          if (i < 7) {
+            intSolids --;
+          }
+          else if (i > 8) {
+            intStripes --;
+          }
+        }
       }
-      else if (ballPos[i][0] + 10 > width - 55 && ballPos[i][1] + 10 > 422 - 55) {
-        mustHide[i] = true;
+      else if (ballPos[i][0] + 10 > width - 52 && ballPos[i][1] + 10 > 422 - 52) {
+        if (mustHide[i] == false) {
+          mustHide[i] = true;
+          if (i < 7) {
+            intSolids --;
+          }
+          else if (i > 8) {
+            intStripes --;
+          }
+        }
       }
-      else if (ballPos[i][0] - 10 < 55 && ballPos[i][1] - 10 < 55) {
-        mustHide[i] = true;
+      else if (ballPos[i][0] - 10 < 52 && ballPos[i][1] - 10 < 52) {
+        if (mustHide[i] == false) {
+          mustHide[i] = true;
+          if (i < 7) {
+            intSolids --;
+          }
+          else if (i > 8) {
+            intStripes --;
+          }
+        }
       }
-      else if (ballPos[i][0] - 10 < 55 && ballPos[i][1] + 10 > 422 - 55) {
-        mustHide[i] = true;
+      else if (ballPos[i][0] - 10 < 52 && ballPos[i][1] + 10 > 422 - 52) {
+        if (mustHide[i] == false) {
+          mustHide[i] = true;
+          if (i < 7) {
+            intSolids --;
+          }
+          else if (i > 8) {
+            intStripes --;
+          }
+        }
       }
       else if (ballPos[i][0] >= 355 && ballPos[i][0] <= 395 && ballPos[i][1] - 10 < 50) {
-        mustHide[i] = true;
+        if (mustHide[i] == false) {
+          mustHide[i] = true;
+          if (i < 7) {
+            intSolids --;
+          }
+          else if (i > 8) {
+            intStripes --;
+          }
+        }
       } 
       else if (ballPos[i][0] >= 355 && ballPos[i][0] <= 395 && ballPos[i][1] + 10 > 422 - 50) {
-        mustHide[i] = true;
+        if (mustHide[i] == false) {
+          mustHide[i] = true;
+          if (i < 7) {
+            intSolids --;
+          }
+          else if (i > 8) {
+            intStripes --;
+          }
+        }
       }
       else {
         if (ballPos[i][0] + 10 > width - 50 || ballPos[i][0] - 10 < 45) {
@@ -164,7 +306,7 @@ public class Sketch extends PApplet {
     // white ball doesnt go through mustHide process
   }
 
-  public void mouseDragged () { //not simply dragged, level stages needed.
+  public void mouseDragged () {
     mouseIsDragged = true;
     rotation = atan2((float) (mouseY - ballPos[0][1]), (float) (mouseX - ballPos[0][0]));
     xChange = 1.05 * imgStick.width * Math.cos (rotation);
@@ -174,7 +316,7 @@ public class Sketch extends PApplet {
   }
 
   public void mouseClicked () { //set a stage cause clicking during ruins directions
-    // click without dragging doesnt work
+    // click without dragging doesnt work (screen goes blank)
 
     if (mouseIsDragged == true) {
       return;
@@ -189,7 +331,6 @@ public class Sketch extends PApplet {
     }
     power = 48 - (int) key;
 
-
     if (Math.cos (rotation) < 0) {
       velocity[0][0] = (float) (power * (-350) * Math.cos(rotation));
     }
@@ -203,9 +344,11 @@ public class Sketch extends PApplet {
       velocity[0][1] = -1 * Math.abs (velocity[0][0] * (float) slope);
     }
 
-    
     needsToChoosePower = false;
+    
+    intPlayer *= -1;
   }
+
 
   private boolean collisionCheck (int a, int b) {
     if (dist ((float) ballPos[a][0], (float) ballPos[a][1], (float) ballPos[b][0], (float) ballPos[b][1]) < 21) {
