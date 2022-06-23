@@ -33,9 +33,10 @@ public class Sketch extends PApplet {
   double xChange = 0, yChange = 0;
   double slope = 1;
   int ballsMoving = 0;
-  boolean mouseIsDragged = false, needsToChoosePower = false;
+  int intLeftPerson = -1;
+  boolean mouseIsDragged = false, needsToChoosePower = false, boolBallsAssigned = false;
   int power = 0;
-  int intPlayer = 1, intSolids = 7, intStripes = 7;
+  int intPlayer = -1, intSolids = 7, intStripes = 7, intSolidsShot = 0, intStripesShot = 0, intLastBall = -1;
 
   public void settings() {
     size(750, 472);
@@ -126,6 +127,7 @@ public class Sketch extends PApplet {
 
     stickX = ballPos[0][0] + (-0.5 * imgStick.width);
     stickY = ballPos[0][1] + (-0.5 * imgStick.height);
+    int intPrevBallsMoving = ballsMoving;
     ballsMoving = 0;
     for (int i = 0; i < 16; i ++) {
       for (int j = 0; j < 2; j ++) {
@@ -135,7 +137,43 @@ public class Sketch extends PApplet {
         }
       }
     }
+    if (intPrevBallsMoving != 0 && ballsMoving == 0) {
+      if (intPlayer == 1) {
+        if (intLeftPerson == 1) {
+          if (intStripesShot == 0 && intSolidsShot > 0) {
+            intPlayer *= -1;
+          }
+        }
+        else if (intLeftPerson == 9) {
+          if (intSolidsShot == 0 && intStripesShot > 0) {
+            intPlayer *= -1;
+          } 
+        }
+      }
+      else {
+        if (intLeftPerson == 9) {
+          if (intStripesShot == 0 && intSolidsShot > 0) {
+            intPlayer *= -1;
+          }
+        }
+        else if (intLeftPerson == 1) {
+          if (intSolidsShot == 0 && intStripesShot > 0) {
+            intPlayer *= -1;
+          } 
+        }
+      }
+    }
+    
 	  image (imgBoard, 0, 0);
+
+    if (intLeftPerson == 1) {
+      image (imgBall7, 90, 437);
+      image (imgBall15, width - 110, 437);
+    }
+    else if (intLeftPerson == 9) {
+      image (imgBall7, 90, 437);
+      image (imgBall15, width - 110, 437);
+    }
 
     fill (255);
     ellipse ((float) ballPos[0][0], (float) ballPos[0][1], 20, 20); //add conditions of when moving
@@ -209,8 +247,8 @@ public class Sketch extends PApplet {
     }
     
     for (int i = 0; i < 16; i ++) {     
-      velocity[i][0] *= 0.98;
-      velocity[i][1] *= 0.98;
+      velocity[i][0] *= 0.97;
+      velocity[i][1] *= 0.97;
       for (int j = 0; j < 2; j ++) {
         if (Math.abs (velocity[i][j]) < 2) {
           velocity[i][j] = 0;
@@ -230,66 +268,198 @@ public class Sketch extends PApplet {
       if (ballPos[i][0] + 10 > width - 52 && ballPos[i][1] - 10 < 52) {
         if (mustHide[i] == false) {
           mustHide[i] = true;
-          if (i < 7) {
+          intLastBall = i;
+          if (i <= 7) {
             intSolids --;
+            intSolidsShot ++;
           }
           else if (i > 8) {
             intStripes --;
+            intStripesShot ++;
+          }
+          if (mustHide[8] == false && intSolids + intStripes == 13) {
+            boolBallsAssigned = true;
+            if (intPlayer == -1) {
+              if (intLastBall < 8) {
+                intLeftPerson = 9;
+              }
+              else if (intLastBall > 8) {
+                intLeftPerson = 1;
+              }
+            }
+            else {
+              if (intLastBall < 8) {
+                intLeftPerson = 1;
+              }
+              else if (intLastBall > 8) {
+                intLeftPerson = 9;
+              }
+            }
           }
         }
       }
       else if (ballPos[i][0] + 10 > width - 52 && ballPos[i][1] + 10 > 422 - 52) {
         if (mustHide[i] == false) {
           mustHide[i] = true;
-          if (i < 7) {
+          intLastBall = i;
+          if (i <= 7) {
             intSolids --;
+            intSolidsShot ++;
           }
           else if (i > 8) {
             intStripes --;
+            intStripesShot ++;
+          }
+          if (mustHide[8] == false && intSolids + intStripes == 13) {
+            boolBallsAssigned = true;
+            if (intPlayer == -1) {
+              if (intLastBall < 8) {
+                intLeftPerson = 9;
+              }
+              else if (intLastBall > 8) {
+                intLeftPerson = 1;
+              }
+            }
+            else {
+              if (intLastBall < 8) {
+                intLeftPerson = 1;
+              }
+              else if (intLastBall > 8) {
+                intLeftPerson = 9;
+              }
+            }
           }
         }
       }
       else if (ballPos[i][0] - 10 < 52 && ballPos[i][1] - 10 < 52) {
         if (mustHide[i] == false) {
           mustHide[i] = true;
-          if (i < 7) {
+          intLastBall = i;
+          if (i <= 7) {
             intSolids --;
+            intSolidsShot ++;
           }
           else if (i > 8) {
             intStripes --;
+            intStripesShot ++;
+          }
+          if (mustHide[8] == false && intSolids + intStripes == 13) {
+            boolBallsAssigned = true;
+            if (intPlayer == -1) {
+              if (intLastBall < 8) {
+                intLeftPerson = 9;
+              }
+              else if (intLastBall > 8) {
+                intLeftPerson = 1;
+              }
+            }
+            else {
+              if (intLastBall < 8) {
+                intLeftPerson = 1;
+              }
+              else if (intLastBall > 8) {
+                intLeftPerson = 9;
+              }
+            }
           }
         }
       }
       else if (ballPos[i][0] - 10 < 52 && ballPos[i][1] + 10 > 422 - 52) {
         if (mustHide[i] == false) {
           mustHide[i] = true;
-          if (i < 7) {
+          intLastBall = i;
+          if (i <= 7) {
             intSolids --;
+            intSolidsShot ++;
           }
           else if (i > 8) {
             intStripes --;
+            intStripesShot ++;
+          }
+          if (mustHide[8] == false && intSolids + intStripes == 13) {
+            boolBallsAssigned = true;
+            if (intPlayer == -1) {
+              if (intLastBall < 8) {
+                intLeftPerson = 9;
+              }
+              else if (intLastBall > 8) {
+                intLeftPerson = 1;
+              }
+            }
+            else {
+              if (intLastBall < 8) {
+                intLeftPerson = 1;
+              }
+              else if (intLastBall > 8) {
+                intLeftPerson = 9;
+              }
+            }
           }
         }
       }
       else if (ballPos[i][0] >= 355 && ballPos[i][0] <= 395 && ballPos[i][1] - 10 < 50) {
         if (mustHide[i] == false) {
           mustHide[i] = true;
-          if (i < 7) {
+          intLastBall = i;
+          if (i <= 7) {
             intSolids --;
+            intSolidsShot ++;
           }
           else if (i > 8) {
             intStripes --;
+            intStripesShot ++;
+          }
+          if (mustHide[8] == false && intSolids + intStripes == 13) {
+            boolBallsAssigned = true;
+            if (intPlayer == -1) {
+              if (intLastBall < 8) {
+                intLeftPerson = 9;
+              }
+              else if (intLastBall > 8) {
+                intLeftPerson = 1;
+              }
+            }
+            else {
+              if (intLastBall < 8) {
+                intLeftPerson = 1;
+              }
+              else if (intLastBall > 8) {
+                intLeftPerson = 9;
+              }
+            }
           }
         }
       } 
       else if (ballPos[i][0] >= 355 && ballPos[i][0] <= 395 && ballPos[i][1] + 10 > 422 - 50) {
         if (mustHide[i] == false) {
           mustHide[i] = true;
-          if (i < 7) {
+          intLastBall = i;
+          if (i <= 7) {
             intSolids --;
+            intSolidsShot ++;
           }
           else if (i > 8) {
             intStripes --;
+            intStripesShot ++;
+          }
+          if (mustHide[8] == false && intSolids + intStripes == 13) {
+            boolBallsAssigned = true;
+            if (intPlayer == -1) {
+              if (intLastBall < 8) {
+                intLeftPerson = 9;
+              }
+              else if (intLastBall > 8) {
+                intLeftPerson = 1;
+              }
+            }
+            else {
+              if (intLastBall < 8) {
+                intLeftPerson = 1;
+              }
+              else if (intLastBall > 8) {
+                intLeftPerson = 9;
+              }
+            }
           }
         }
       }
@@ -332,10 +502,10 @@ public class Sketch extends PApplet {
     power = 48 - (int) key;
 
     if (Math.cos (rotation) < 0) {
-      velocity[0][0] = (float) (power * (-350) * Math.cos(rotation));
+      velocity[0][0] = (float) (power * (-250) * Math.cos(rotation));
     }
     else {
-      velocity[0][0] = (float) (power * (-350) * Math.cos(rotation));
+      velocity[0][0] = (float) (power * (-250) * Math.cos(rotation));
     }
     if (Math.sin (rotation) > 0) {
       velocity[0][1] = Math.abs (velocity[0][0] * (float) slope);
@@ -347,6 +517,8 @@ public class Sketch extends PApplet {
     needsToChoosePower = false;
     
     intPlayer *= -1;
+    intSolidsShot = 0;
+    intStripesShot = 0;
   }
 
 
@@ -387,5 +559,6 @@ public class Sketch extends PApplet {
     velocity[b][1] = bVelDotNormTagY + bVelDotTangentTagY;
 
   }
+
  
 }
