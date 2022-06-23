@@ -1,6 +1,12 @@
 import processing.core.PApplet;
 import processing.core.PImage;
 
+/**
+* A program Sketch.java that is a simulation of 8 ball pool game.
+* @author: Avin A.
+*
+*/
+
 public class Sketch extends PApplet {
 	
 	PImage imgBoard;
@@ -41,10 +47,17 @@ public class Sketch extends PApplet {
   int intPocketChosen1 = -1, intPocketChosen2 = -1;
   boolean blP1Lost = false, blP1Won = false, blGameCrash = false;
 
+  /**
+   * Initial settings happens in it
+   *
+   */
   public void settings() {
     size(750, 472);
   }
-
+  /**
+   * Is called once and to set the initial environment code is to happen in
+   *
+   */
   public void setup() {
 
     imgBoard = loadImage ("board.png");
@@ -124,6 +137,10 @@ public class Sketch extends PApplet {
    
   }
 
+  /**
+   * Is called continuously and executes the codes within it infinite times
+   *
+   */
   public void draw() {
     
     background(125, 255, 205);
@@ -133,6 +150,7 @@ public class Sketch extends PApplet {
         dblStickY = dblBallPos[0][1] + (-0.5 * imgStick.height);
         int intPrevBallsMoving = intBallsMoving;
         intBallsMoving = 0;
+        // finds number of balls moving
         for (int i = 0; i < 16; i ++) {
           for (int j = 0; j < 2; j ++) {
             if (fltVelocity[i][j] != 0) {
@@ -141,10 +159,12 @@ public class Sketch extends PApplet {
             }
           }
         }
+        // changes pocket decisions
         if (intBallsMoving == 0) {
           intPocketChosen1 = -1;
           intPocketChosen2 = -1;
         }
+        // decides whose turn it should be
         if (intPrevBallsMoving != 0 && intBallsMoving == 0) {
           if (intPlayer == -1) {
             if (intLeftPerson == 1) {
@@ -173,7 +193,7 @@ public class Sketch extends PApplet {
         }
 
         image (imgBoard, 0, 0);
-
+        // arrow images and ball patterns plus where they should be based on players' turns
         if (intLeftPerson == 1) {
           image (imgBall7, 90, 437);
           image (imgBall15, width - 110, 437);
@@ -237,11 +257,12 @@ public class Sketch extends PApplet {
         if (blMustHide[15] == false) {
           image (imgBall15, (float) (dblBallPos[15][0] - 10), (float) (dblBallPos[15][1] - 10));
         }
-
+        // rotation of the stick using push and pop Matrix
         pushMatrix();
         translate ((float) (dblStickX + imgStick.width / 2), (float) (dblStickY + imgStick.height / 2));
         rotate ((float) (dblRotation));
         translate ((float) (-1.05 * imgStick.width), (float) (-0.5 * imgStick.height));
+        // indicates if black ball is to be potted
         if (intPlayer == 1) {
           if (intLeftPerson == 1 && intSolids == 0) {
             blChoosingBlackPocket = true;
@@ -258,14 +279,14 @@ public class Sketch extends PApplet {
             blChoosingBlackPocket = true;
           }
         }
+        
         if (intBallsMoving == 0 && blChoosingBlackPocket == false) {
           image (imgStick, 0, 0);
-          // if slope is undefined?
           dblSlope = -dblYChange / dblXChange;
         }
         popMatrix();
 
-        
+        // stage where pocket should be chosen
         if (blChoosingBlackPocket == true) {
           fill (0);
           textSize(12);
@@ -273,13 +294,14 @@ public class Sketch extends PApplet {
           text (strPockShot, 249, 444);
         }
 
+        // stage where power must be indicated
         if (blNeedsToChoosePower) {
           fill (0);
           textSize(12);
           String strPowerDetect = "ENTER A NUMBER BETWEEN 1 AND 9 TO INDICATE THE POWER OF YOUR HIT";
           text (strPowerDetect, 149, 444);
         }
-        
+        // friction and gradual velocity changes of every ball
         for (int i = 0; i < 16; i ++) {     
          fltVelocity[i][0] *= 0.98;
          fltVelocity[i][1] *= 0.98;
@@ -290,15 +312,15 @@ public class Sketch extends PApplet {
           }
           fltBallSpeed[i][0] = (float) (fltVelocity[i][0] / 100);
           fltBallSpeed[i][1] = (float) (fltVelocity[i][1] / 100);
-         dblBallPos[i][0] += fltBallSpeed[i][0];
-         dblBallPos[i][1] += fltBallSpeed[i][1];
+          dblBallPos[i][0] += fltBallSpeed[i][0];
+          dblBallPos[i][1] += fltBallSpeed[i][1];
           
           for (int j = i + 1; j < 16; j ++) {
             if (collisionCheck (i, j) == true) {
               collided(i, j);
             }
           }
-
+          // checks if any ball is potted in any of the six pockets
           if (dblBallPos[i][0] + 10 > width - 55 && dblBallPos[i][1] - 10 < 55) {
             if (blMustHide[i] == false) {
               blMustHide[i] = true;
@@ -517,6 +539,7 @@ public class Sketch extends PApplet {
               }
             }
           }
+          // edge collision detection
           else {
             if (dblBallPos[i][0] + 10 > width - 50 ||dblBallPos[i][0] - 10 < 45) {
              fltVelocity[i][0] *= -1;
@@ -527,6 +550,7 @@ public class Sketch extends PApplet {
           }
         }
       }
+      // last screen based on who won
       else if (blP1Lost == true) {
         background(255);
         textSize(14);
@@ -542,10 +566,12 @@ public class Sketch extends PApplet {
       }
     }
 
-    // white ball doesnt go through mustHide process
   }
-
+  /**
+   * Is called every time a mouse button is dragged
+   */
   public void mouseDragged () {
+    // changes slope and rotation accordingly
     blMouseIsDragged = true;
     dblRotation = atan2((float) (mouseY -dblBallPos[0][1]), (float) (mouseX -dblBallPos[0][0]));
     dblXChange = 1.05 * imgStick.width * Math.cos (dblRotation);
@@ -554,6 +580,9 @@ public class Sketch extends PApplet {
     blMouseIsDragged = false;
   }
 
+  /**
+   * Is called every time a mouse button is clicked
+   */
   public void mouseClicked () { //set a stage cause clicking during ruins directions
     // click without dragging doesnt work (screen goes blank)
 
@@ -563,37 +592,38 @@ public class Sketch extends PApplet {
     if (blChoosingBlackPocket == false) {
       blNeedsToChoosePower = true;
     }
-      if (mouseX > 19 && mouseX < 59 && mouseY > 17 && mouseY < 57) {
-        intPocketChosen1 = 1;
-        intPocketChosen2 = 1;
-        blChoosingBlackPocket = false;
-      }
-      else if (mouseX > 359 && mouseX < 393 && mouseY > 10 && mouseY < 50) {
-        intPocketChosen1 = 2;
-        intPocketChosen2 = 2;
-        blChoosingBlackPocket = false;
-      }
-      else if (mouseX > 690 && mouseX < 730 && mouseY > 17 && mouseY < 57) {
-        intPocketChosen1 = 3;
-        intPocketChosen2 = 3;
-        blChoosingBlackPocket = false;
-      }
-      else if (mouseX > 19 && mouseX < 59 && mouseY > 364 && mouseY < 404) {
-        intPocketChosen1 = 4;
-        intPocketChosen2 = 4;
-        blChoosingBlackPocket = false;
-      }
-      else if (mouseX > 359 && mouseX < 393 && mouseY > 374 && mouseY < 414) {
-        intPocketChosen1 = 5;
-        intPocketChosen2 = 5;
-        blChoosingBlackPocket = false;
-      }
-      else if (mouseX > 690 && mouseX < 730 && mouseY > 364 && mouseY < 404) {
-        intPocketChosen1 = 6;
-        intPocketChosen2 = 6;
-        blChoosingBlackPocket = false;
-      }
-  
+    // checks if any pocket was clicked
+    if (mouseX > 19 && mouseX < 59 && mouseY > 17 && mouseY < 57) {
+      intPocketChosen1 = 1;
+      intPocketChosen2 = 1;
+      blChoosingBlackPocket = false;
+    }
+    else if (mouseX > 359 && mouseX < 393 && mouseY > 10 && mouseY < 50) {
+      intPocketChosen1 = 2;
+      intPocketChosen2 = 2;
+      blChoosingBlackPocket = false;
+    }
+    else if (mouseX > 690 && mouseX < 730 && mouseY > 17 && mouseY < 57) {
+      intPocketChosen1 = 3;
+      intPocketChosen2 = 3;
+      blChoosingBlackPocket = false;
+    }
+    else if (mouseX > 19 && mouseX < 59 && mouseY > 364 && mouseY < 404) {
+      intPocketChosen1 = 4;
+      intPocketChosen2 = 4;
+      blChoosingBlackPocket = false;
+    }
+    else if (mouseX > 359 && mouseX < 393 && mouseY > 374 && mouseY < 414) {
+      intPocketChosen1 = 5;
+      intPocketChosen2 = 5;
+      blChoosingBlackPocket = false;
+    }
+    else if (mouseX > 690 && mouseX < 730 && mouseY > 364 && mouseY < 404) {
+      intPocketChosen1 = 6;
+      intPocketChosen2 = 6;
+      blChoosingBlackPocket = false;
+    }
+
     else {
       if (mouseX > 19 && mouseX < 59 && mouseY > 17 && mouseY < 57) {
         intPocketChosen2 = 1;
@@ -622,12 +652,15 @@ public class Sketch extends PApplet {
     }
   }
 
+  /**
+   * Is called every time a key button is pressed
+   */
   public void keyPressed () {
     if (blNeedsToChoosePower == false) {
       return;
     }
     intPower = 48 - (int) key;
-
+    // sets white ball velocity based on power indicated by player
     if (Math.cos (dblRotation) < 0) {
      fltVelocity[0][0] = (float) (intPower * (-250) * Math.cos(dblRotation));
     }
@@ -642,11 +675,19 @@ public class Sketch extends PApplet {
     }
 
     blNeedsToChoosePower = false;
-    
+
+    // changes players turns
     intPlayer *= -1;
     intSolidsShot = 0;
     intStripesShot = 0;
   }
+
+  /**
+   * identifies the winner after the black ball is potted
+   *
+   * @param pock which pock the ball has falled into
+   * 
+   */
   private void blackBallGoneIn (int pock) {
     if (intPlayer == -1 && intPocketChosen1 == pock) {
       blP1Won = true;
@@ -669,7 +710,13 @@ public class Sketch extends PApplet {
   }
 
   
-
+  /**
+   * checks if any two balls are colliding
+   *
+   * @param a  first ball's number
+   * @param b  seocnd ball's number
+   * @return whether the balls inputted are colliding
+   */
   private boolean collisionCheck (int a, int b) {
     if (dist ((float)dblBallPos[a][0], (float)dblBallPos[a][1], (float)dblBallPos[b][0], (float)dblBallPos[b][1]) < 21) {
       return true;
@@ -677,6 +724,12 @@ public class Sketch extends PApplet {
     return false;
   }
 
+  /**
+   * changes velocities according to how and where the balls are colliding (ohysics of the code)
+   *
+   * @param a  first ball's number
+   * @param b  seocnd ball's number
+   */
   private void collided (int a, int b) {
     float normalX = (float) (dblBallPos[b][0] -dblBallPos[a][0]);
     float normalY = (float) (dblBallPos[b][1] -dblBallPos[a][1]);
@@ -705,7 +758,7 @@ public class Sketch extends PApplet {
     fltVelocity[a][1] = aVelDotNormTagY + aVelDotTangentTagY;
     fltVelocity[b][0] = bVelDotNormTagX + bVelDotTangentTagX;
     fltVelocity[b][1] = bVelDotNormTagY + bVelDotTangentTagY;
-
+    // knowledge obtained from multiple articles and youtube videos
   }
 
  
